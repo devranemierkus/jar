@@ -1,0 +1,32 @@
+name: Build ArsaPlugin JAR
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ZIP ac
+        run: unzip -o ArsaPlugin_v15_fixed.zip -d extracted
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Derle
+        working-directory: extracted/ArsaPlugin
+        run: mvn clean package -B --no-transfer-progress
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArsaPlugin-JAR
+          path: extracted/ArsaPlugin/target/ArsaPlugin-*.jar
+          retention-days: 90
